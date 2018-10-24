@@ -1,0 +1,4 @@
+com\qa\data\Users.class
+com\qa\util\TestUtil.class
+com\qa\base\TestBase.class
+com\qa\client\RestClient.class
