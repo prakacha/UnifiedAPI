@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="2" passed="2">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="4389" started-at="2018-10-29T12:39:17Z" finished-at="2018-10-29T12:39:21Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="4389" started-at="2018-10-29T12:39:17Z" finished-at="2018-10-29T12:39:21Z">
+      <class name="com.qa.tests.PostAPI_CreateNewCustomer">
+        <test-method status="PASS" signature="startTest()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624]" name="startTest" is-config="true" duration-ms="334" started-at="2018-10-29T18:09:17Z" finished-at="2018-10-29T18:09:17Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- startTest -->
+        <test-method status="PASS" signature="setup()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624]" name="setup" is-config="true" duration-ms="0" started-at="2018-10-29T18:09:17Z" finished-at="2018-10-29T18:09:17Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="test_Post_API_Create()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624]" name="test_Post_API_Create" duration-ms="2392" started-at="2018-10-29T18:09:17Z" finished-at="2018-10-29T18:09:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test_Post_API_Create -->
+        <test-method status="PASS" signature="getResult(org.testng.ITestResult)[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624]" name="getResult" is-config="true" duration-ms="2" started-at="2018-10-29T18:09:20Z" finished-at="2018-10-29T18:09:20Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[[TestResult name=test_Post_API_Create status=SUCCESS method=PostAPI_CreateNewCustomer.test_Post_API_Create()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624] output={null}]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getResult -->
+        <test-method status="PASS" signature="setup()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624]" name="setup" is-config="true" duration-ms="1" started-at="2018-10-29T18:09:20Z" finished-at="2018-10-29T18:09:20Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="test_Post_API_Search()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624]" name="test_Post_API_Search" duration-ms="1615" started-at="2018-10-29T18:09:20Z" finished-at="2018-10-29T18:09:21Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test_Post_API_Search -->
+        <test-method status="PASS" signature="getResult(org.testng.ITestResult)[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624]" name="getResult" is-config="true" duration-ms="1" started-at="2018-10-29T18:09:21Z" finished-at="2018-10-29T18:09:21Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[[TestResult name=test_Post_API_Search status=SUCCESS method=PostAPI_CreateNewCustomer.test_Post_API_Search()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624] output={null}]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- getResult -->
+        <test-method status="PASS" signature="endTest()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@5e3a8624]" name="endTest" is-config="true" duration-ms="29" started-at="2018-10-29T18:09:21Z" finished-at="2018-10-29T18:09:21Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- endTest -->
+      </class> <!-- com.qa.tests.PostAPI_CreateNewCustomer -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

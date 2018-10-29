@@ -31,10 +31,10 @@
     <timeFormat>HH:mm:ss</timeFormat>
     
     <!-- custom javascript -->
-    <scripts>
+
+	<scripts>
       <![CDATA[
-        $(document).ready(function() {
-          
+        $(document).ready(function() {  
         });
       ]]>
     </scripts>

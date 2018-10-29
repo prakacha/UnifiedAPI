@@ -23,6 +23,7 @@ import com.qa.client.RestClient;
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
+import com.qa.util.TestUtil;
 
 
 public class PostAPI_CreateNewCustomer extends TestBase {
@@ -38,6 +39,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	String url_Search;
 	RestClient restClient;
 	CloseableHttpResponse closeableHttpResponse;
+
 	
 	//ExtentReport class object	
 	static ExtentReports extent_report;
@@ -61,17 +63,20 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	{
 		extent_report = new ExtentReports(System.getProperty("user.dir")+"\\ExecutionResults.html", false);
 		extent_report.addSystemInfo("Suite Description", "API calls to MDM system");
+		System.out.println(System.getProperty("user.dir")+"\\src\\main\\java\\com\\qa\\extentReport\\extent-config.xml");
 		extent_report.loadConfig(new File(System.getProperty("user.dir")+"\\src\\main\\java\\com\\qa\\extentReport\\extent-config.xml"));
+
+		
 	}
 	
 // POST API call to create customer
-@Test(priority =0)
+@Test
 	public void test_Post_API_Create() throws ClientProtocolException, IOException {
 			System.out.println("TEST#1 POST API to create customer------------------------------------------------------------");
 			System.out.flush();
 			
 			extent_test = extent_report.startTest("test_Post_API_Create");
-			extent_test.log(LogStatus.INFO, "Test description: create customer using post API");
+			extent_test.log(LogStatus.INFO, "Test Description: create customer using post API");
 			
 		//Create a hash map for passing header		
 			HashMap<String, String> headerMap = new HashMap<String, String>();
@@ -92,27 +97,42 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	
 	    //retrieve one level element from JSON
 	        Object strAgreementtype = responseJson.get("agreementType");
-	        System.out.println("Agreement type: "+strAgreementtype);
+	        //System.out.println("Agreement type: "+strAgreementtype);
 	        extent_test.log(LogStatus.INFO, "AgreementType: "+strAgreementtype);
+	        
 	    //retrieve two level element
-	        System.out.println("Response with Initial firstName " + responseJson);
 	        JSONObject responseJson_basicCustomerInfo = responseJson.getJSONObject("basicCustomerInfo");
 	        responseJson_basicCustomerInfo.remove("firstName");
-	        System.out.println("Response without firstName " + responseJson);
-	        responseJson_basicCustomerInfo.put("firstName", "test_97");
-	        System.out.println("Response with final firstName " + responseJson);
+	   //get a random number for first name
+			int randomNumber_firstName = TestUtil.get_randomNumber(1000);
+	        responseJson_basicCustomerInfo.put("firstName", "test_"+randomNumber_firstName);
+	        System.out.println("firstName: " + "test_"+randomNumber_firstName);
+	        extent_test.log(LogStatus.INFO, "First Name: "+ "test_"+randomNumber_firstName);
+	        //System.out.println("Response with randomly generated firstName " + responseJson);
+	    //get a random number for last name     
+	        int randomNumber_LastName = TestUtil.get_randomNumber(1000);
+	        responseJson_basicCustomerInfo.remove("lastName");
+	        responseJson_basicCustomerInfo.put("lastName", "test_"+randomNumber_LastName);
+	        System.out.println("lastName: " + "test_"+randomNumber_LastName);
+	        extent_test.log(LogStatus.INFO, "Last Name: "+ "test_"+randomNumber_LastName);
 	        
-	    //retrieve two level array-element  
+	     //retrieve two level array-element  
 	        JSONObject responseJson_CustomerContactInfo = responseJson.getJSONObject("customerContactInfo");
 	        JSONArray responseJson_Array_Contacts = responseJson_CustomerContactInfo.getJSONArray("contacts");
-	        System.out.println("Contacts Array item --- >"+responseJson_Array_Contacts.get(0));
+	        //System.out.println("Contacts Array item --- >"+responseJson_Array_Contacts.get(0));
 	        JSONObject responseJson_Contacts = responseJson_Array_Contacts.getJSONObject(0);
 	        JSONObject responseJson_Contact = responseJson_Contacts.getJSONObject("contact");
-	        System.out.println("Contact item1 --- >"+responseJson_Contact.get("value"));	//retrieve email address
+	       //System.out.println("e-Mail: "+responseJson_Contact.get("value"));	//retrieve email address
+	    //get a random number for email-
+	        int randomNumber_email = TestUtil.get_randomNumber(1000);
+	        responseJson_Contact.remove("value");
+	        responseJson_Contact.put("value", "Test_"+randomNumber_email+"@test.com");
+	        System.out.println("e-Mail: "+"Test_"+randomNumber_email+"@test.com");	//retrieve email address
+	        extent_test.log(LogStatus.INFO, "eMail: "+ "test_"+randomNumber_email+"@test.com");
 	        
 	    //Convert JSONObject back into String        
 	        usersJSONString = responseJson.toString();
-	
+	        System.out.println("Request String: " + usersJSONString);
 	    // update JSON file with new details        
 	        try {
 	            Files.write(Paths.get(System.getProperty("user.dir")+"/src/main/java/com/qa/data/data_CreateCustomer.json"), usersJSONString.getBytes());
@@ -138,8 +158,8 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			}
 		//retrieve response string 			
 			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
-			System.out.println("Response String from API: " + responseString);
-			extent_test.log(LogStatus.PASS, "Response String: "+ responseString);
+			System.out.println("Response String: " + responseString);
+			extent_test.log(LogStatus.INFO, "Response String: "+ responseString);
 			
 		//Validate the Response
 			//Pia/Hannu to update more on this
@@ -152,7 +172,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 
 
 //POST API call to search customer
-@Test(priority =1)
+@Test
 	public void test_Post_API_Search() throws ClientProtocolException, IOException {
 			System.out.println("");
 			System.out.println("");

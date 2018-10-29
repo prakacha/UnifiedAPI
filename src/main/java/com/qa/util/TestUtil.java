@@ -1,5 +1,6 @@
 //Unified API - TestUtil.java
 package com.qa.util;
+import java.util.Random;
 import org.json.JSONArray;
 import org.json.JSONObject;
 public class TestUtil {
@@ -15,4 +16,13 @@ public class TestUtil {
 		return obj.toString();
 		
 	} // method
+	
+//Generate a random number	
+	public static int get_randomNumber(int upperLimit) {
+    	Random objGenerator = new Random();
+          int randomNumber = objGenerator.nextInt(upperLimit);
+          //System.out.println("Random No : " + randomNumber);
+          return randomNumber;
+	}	//Random number method
+
 } // class
