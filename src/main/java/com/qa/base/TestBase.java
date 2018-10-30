@@ -9,6 +9,7 @@ import java.util.Properties;
 public class TestBase {
 	public int RESPONSE_STATUS_CODE_200= 200;	// OK
 	public int RESPONSE_STATUS_CODE_201= 201;	// Successfully registered
+	public int RESPONSE_STATUS_CODE_204= 204;	// No Content
 	public int RESPONSE_STATUS_CODE_400= 400;	// Bad Request or Invalid Syntax
 	public int RESPONSE_STATUS_CODE_401= 401;	// Unauthorized
 	public int RESPONSE_STATUS_CODE_403= 403;	// Accessing the resource you were trying to reach is forbidden.
