@@ -12,23 +12,23 @@ public class Test_Listener implements ITestListener {
 	String strTestName;
 
 	public void onTestSuccess(ITestResult result) {
-		System.out.println("Summary: Test '"+result.getName()+"' "+ result.getStatus());
 		strTestStatus = result.getStatus();
 		strTestName = result.getName();
+		System.out.println("Summary: Test '"+strTestName+"' "+ "passed");
 		TestUtil.getResult(strTestStatus, strTestName);	
 	}
 
 	public void onTestFailure(ITestResult result) {
-		System.out.println("Summary: Test '"+result.getName()+"' "+ result.getStatus());
 		strTestStatus = result.getStatus();
 		strTestName = result.getName();
+		System.out.println("Summary: Test '"+strTestName+"' "+ "failed");
 		TestUtil.getResult(strTestStatus, strTestName);
 	}
 
 	public void onTestSkipped(ITestResult result) {
-		System.out.println("Summary: Test '"+result.getName()+"' "+ result.getStatus());
 		strTestStatus = result.getStatus();
 		strTestName = result.getName();
+		System.out.println("Summary: Test '"+strTestName+"' "+ "skipped");
 		TestUtil.getResult(strTestStatus, strTestName);	
 	}
 
