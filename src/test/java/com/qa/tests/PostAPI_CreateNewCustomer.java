@@ -1,7 +1,6 @@
 //Unified API - PostAPICreateNewCustomer.java
 package com.qa.tests;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,18 +11,17 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.Assert;
-import org.testng.ITestResult;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import com.qa.base.TestBase;
 import com.qa.client.RestClient;
-import com.relevantcodes.extentreports.ExtentReports;
-import com.relevantcodes.extentreports.ExtentTest;
-import com.relevantcodes.extentreports.LogStatus;
 import com.qa.util.TestUtil;
+
+@Listeners(com.qa.listener.Test_Listener.class)
 
 public class PostAPI_CreateNewCustomer extends TestBase {
 	
@@ -42,10 +40,6 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	RestClient restClient;
 	CloseableHttpResponse closeableHttpResponse;
 
-	
-	//ExtentReport class object	
-	static ExtentReports extent_report;
-	static ExtentTest extent_test;
 
 // build API url	
 @BeforeMethod
@@ -56,26 +50,25 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		serviceUrl_SearchCustomer = prop.getProperty("serviceURL_SearchCustomer");
 		url_Create = url_MasterAPI + serviceUrl_CreateCustomer;
 		url_Search = url_MasterAPI + serviceUrl_SearchCustomer;
-	}	//Method SetUp close
+		
+	}	//Method SetUp 
 
 // ExtentReport- startTest Method
 @BeforeTest
-	public static void startTest()
-	{
-		extent_report = new ExtentReports(System.getProperty("user.dir")+"\\ExecutionResults.html", true);
-		extent_report.addSystemInfo("Suite Description", "API calls to MDM system");
-		extent_report.loadConfig(new File(System.getProperty("user.dir")+"\\src\\main\\java\\com\\qa\\extentReport\\extent-config.xml"));	
+	public static void custom_startTest() {
+		TestUtil.startTest();	
 	}
 	
 // POST API call to create customer
-@Test(priority = 0)
+@Test(priority = 0, invocationCount = 1)
 	public void test_Post_API_Create() throws ClientProtocolException, IOException {
+	
 			System.out.println("");
 			System.out.println("-------------------------------------");
 			System.out.println("TEST#1: Create Customer");
 			System.out.println("-------------------------------------");
 			
-			extent_test = extent_report.startTest("test_Post_API_Create");
+			TestUtil.startTest("test_Post_API_Create");
 			
 		//Create a hash map for passing header		
 			HashMap<String, String> headerMap = new HashMap<String, String>();
@@ -92,7 +85,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	
 	    //retrieve one level element from JSON
 	        Object strAgreementtype = responseJson.get("agreementType");
-	        writeResult ("INFO", "AgreementType", strAgreementtype.toString());
+	        TestUtil.writeResult ("INFO", "AgreementType", strAgreementtype.toString());
 	        
 	    //retrieve two level element
 	        JSONObject responseJson_basicCustomerInfo = responseJson.getJSONObject("basicCustomerInfo");
@@ -101,14 +94,14 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	   //get a random string for first name
 			randomString_firstName = "test_"+TestUtil.getRandomString(5);
 	        responseJson_basicCustomerInfo.put("firstName", randomString_firstName);
-	        writeResult ("INFO", "First Name", randomString_firstName);
+	        TestUtil.writeResult ("INFO", "First Name", randomString_firstName);
 	        //System.out.println("Response with randomly generated firstName " + responseJson);
 	        
 	    //get a random string for last name     
 	        randomString_LastName = "test_"+ TestUtil.getRandomString(5);
 	        responseJson_basicCustomerInfo.remove("lastName");
 	        responseJson_basicCustomerInfo.put("lastName", randomString_LastName);
-	        writeResult ("INFO", "Last Name", randomString_LastName);
+	        TestUtil.writeResult ("INFO", "Last Name", randomString_LastName);
 	        
 	     //retrieve two level array-element  
 	        JSONObject responseJson_CustomerContactInfo = responseJson.getJSONObject("customerContactInfo");
@@ -121,11 +114,11 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	        randomString_eMail = "Test_"+randomNumber_email+"@test.com";	//get a random value for email-
 	        responseJson_Contact.remove("value");
 	        responseJson_Contact.put("value", randomString_eMail);
-	        writeResult ("INFO", "eMail", randomString_eMail);
+	        TestUtil.writeResult ("INFO", "eMail", randomString_eMail);
 	        
 	    //Convert JSONObject back into String        
 	        usersJSONString = responseJson.toString();
-	        writeResult ("INFO", "Request String", usersJSONString);
+	        TestUtil.writeResult ("INFO", "Request String", usersJSONString);
 	    // update JSON file with new details        
 	        try {
 	            Files.write(Paths.get(System.getProperty("user.dir")+"/src/main/java/com/qa/data/data_CreateCustomer.json"), usersJSONString.getBytes());
@@ -143,27 +136,26 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 							
 		//Write result 		
 			if (strStatusCode == RESPONSE_STATUS_CODE_200){
-				writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+				TestUtil.writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
 			}
 			else {
-				writeResult("FAIL", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+				TestUtil.writeResult("FAIL", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
 			}
 		//retrieve response string 			
 			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
-			writeResult ("INFO", "Response String", responseString);
+			TestUtil.writeResult ("INFO", "Response String", responseString);
 			
 		//Validate the Response
 			//Pia/Hannu to update more on this
 			
-		//endTest 	
-			extent_report.endTest(extent_test);
-			extent_report.flush();	
+		//end test
+			TestUtil.endTest();
 							
 	} // Method postAPITest_Create 
 
 
 //POST API call to search customer
-@Test(priority = 0)
+@Test(priority = 1, invocationCount = 1)
 	public void test_Post_API_Search() throws ClientProtocolException, IOException {
 			System.out.println("");
 			System.out.println("");
@@ -171,8 +163,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			System.out.println("TEST#2: Search Customer");
 			System.out.println("-------------------------------------");
 			
-			extent_test = extent_report.startTest("test_Post_API_Search");
-			extent_test.log(LogStatus.INFO, "Test description: search customer using post API");
+			TestUtil.startTest("test_Post_API_Search");
 			
 		//Create a hash map for passing header		
 			HashMap<String, String> headerMap = new HashMap<String, String>();
@@ -193,7 +184,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	        
 	    //Convert JSONObject back into String        
 	        usersJSONString = responseJson.toString();
-	        writeResult ("INFO", "Request String", usersJSONString);
+	        TestUtil.writeResult ("INFO", "Request String", usersJSONString);
 	        
 	    // update JSON file with new details        
 	        try {
@@ -212,82 +203,35 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	
 		//Write result 	
 			if (strStatusCode == RESPONSE_STATUS_CODE_200){
-				writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+				TestUtil.writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
 			}
 			else {
-				writeResult("FAIL", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+				TestUtil.writeResult("FAIL", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
 			}
 			
 		//retrieve response string 			
 			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
-			writeResult ("INFO", "Response String", responseString);
+			TestUtil.writeResult ("INFO", "Response String", responseString);
 		//endTest 
-			extent_report.endTest(extent_test);
-			extent_report.flush();	
-				
+			TestUtil.endTest();
+			
 	} // Method postAPITest_Search
 
 
 
 //ExtentReport- getResult Method
 @AfterMethod
-	public void getResult(ITestResult result){
-			if(result.getStatus() == ITestResult.FAILURE){
-				extent_test.log(LogStatus.FAIL, "Summary --- '"+result.getName()+"' has failed");
-				extent_test.log(LogStatus.FAIL, "Test Case Failed is "+result.getThrowable());
-			}
-			else if(result.getStatus() == ITestResult.SKIP){
-				extent_test.log(LogStatus.SKIP, "Summary --- '"+result.getName()+"' is skipped");
-			}
-			else if(result.getStatus() == ITestResult.SUCCESS){
-				extent_test.log(LogStatus.PASS, "Summary --- '"+result.getName()+"' has passed");
-			}
+	public void custom_getResult() {
+//		TestUtil.getResult(result);
 	}
+
 
 //ExtentReport- endTest Method
 @AfterTest
-	public void endTest() {
-		extent_report.endTest(extent_test);
-		extent_report.flush();
+	public static void custom_endTest() {
+		TestUtil.endTest();
 	}
-
-public void writeResult(String strResultType, String strOutputTitle,  String strExpectedOutput, String strActualOutput) {
-// write result in Console and ExtentReport with Expected and Actual
-		//write to console 
-		System.out.println(strOutputTitle+"> Expected:"+strExpectedOutput+", Actual:"+strActualOutput);
-		//write to extentReport 
-		if (strResultType == "INFO" ){
-			 extent_test.log(LogStatus.INFO, strOutputTitle+"> Expected:"+strExpectedOutput+ ", Actual:"+strActualOutput);
-		 }
-	     else if (strResultType == "PASS" )  {
-	    	 extent_test.log(LogStatus.PASS, strOutputTitle+"> Expected:"+strExpectedOutput+ ", Actual:"+strActualOutput); 
-	     }
-	     else if(strResultType == "FAIL" ) {
-	    	 extent_test.log(LogStatus.FAIL, strOutputTitle+"> Expected:"+strExpectedOutput+ ", Actual:"+strActualOutput); 
-	     }
-	     else if(strResultType == "WARNING" ) {
-	    	 extent_test.log(LogStatus.WARNING, strOutputTitle+"> Expected:"+strExpectedOutput+ ", Actual:"+strActualOutput); 
-	     }	 
-	} // Method WriteResult
-
-public void writeResult(String strResultType, String strOutputTitle, String strActualOutput) {
-// write result in Console and ExtentReport without any expected value
-			//write to console 
-			System.out.println(strOutputTitle+": "+strActualOutput);
-			//write to extentReport 
-			if (strResultType == "INFO" ){
-				 extent_test.log(LogStatus.INFO, strOutputTitle+": "+ strActualOutput);
-			 }
-		     else if (strResultType == "PASS" )  {
-		    	 extent_test.log(LogStatus.PASS, strOutputTitle+": "+ strActualOutput); 
-		     }
-		     else if(strResultType == "FAIL" ) {
-		    	 extent_test.log(LogStatus.FAIL, strOutputTitle+": "+ strActualOutput); 
-		     }
-		     else if(strResultType == "WARNING" ) {
-		    	 extent_test.log(LogStatus.WARNING, strOutputTitle+": "+ strActualOutput); 
-		     }	 
-		} // Method WriteResult
+		
 
 } //Class PostAPI_CreateNewCustomer
 
