@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="2" passed="2">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="2782" started-at="2018-11-01T07:32:04Z" finished-at="2018-11-01T07:32:07Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="2782" started-at="2018-11-01T07:32:04Z" finished-at="2018-11-01T07:32:07Z">
+      <class name="com.qa.tests.PostAPI_CreateNewCustomer">
+        <test-method status="PASS" signature="custom_startTest()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@604ed9f0]" name="custom_startTest" is-config="true" duration-ms="108" started-at="2018-11-01T13:02:04Z" finished-at="2018-11-01T13:02:04Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- custom_startTest -->
+        <test-method status="PASS" signature="setup()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@604ed9f0]" name="setup" is-config="true" duration-ms="1" started-at="2018-11-01T13:02:04Z" finished-at="2018-11-01T13:02:04Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="test_Post_API_Create()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@604ed9f0]" name="test_Post_API_Create" duration-ms="1968" started-at="2018-11-01T13:02:04Z" finished-at="2018-11-01T13:02:06Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test_Post_API_Create -->
+        <test-method status="PASS" signature="setup()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@604ed9f0]" name="setup" is-config="true" duration-ms="1" started-at="2018-11-01T13:02:06Z" finished-at="2018-11-01T13:02:06Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method status="PASS" signature="custom_getResult()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@604ed9f0]" name="custom_getResult" is-config="true" duration-ms="0" started-at="2018-11-01T13:02:06Z" finished-at="2018-11-01T13:02:06Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- custom_getResult -->
+        <test-method status="PASS" signature="test_Post_API_Search()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@604ed9f0]" name="test_Post_API_Search" duration-ms="664" started-at="2018-11-01T13:02:06Z" finished-at="2018-11-01T13:02:07Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test_Post_API_Search -->
+        <test-method status="PASS" signature="custom_getResult()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@604ed9f0]" name="custom_getResult" is-config="true" duration-ms="0" started-at="2018-11-01T13:02:07Z" finished-at="2018-11-01T13:02:07Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- custom_getResult -->
+        <test-method status="PASS" signature="custom_endTest()[pri:0, instance:com.qa.tests.PostAPI_CreateNewCustomer@604ed9f0]" name="custom_endTest" is-config="true" duration-ms="29" started-at="2018-11-01T13:02:07Z" finished-at="2018-11-01T13:02:07Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- custom_endTest -->
+      </class> <!-- com.qa.tests.PostAPI_CreateNewCustomer -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

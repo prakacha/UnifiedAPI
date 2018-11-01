@@ -5,8 +5,6 @@ import org.testng.ITestListener ;
 import org.testng.ITestResult ;
 import com.qa.util.TestUtil;
 
-
-
 public class Test_Listener implements ITestListener {
 
 //Declare result variables	
