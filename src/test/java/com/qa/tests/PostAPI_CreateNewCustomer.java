@@ -199,7 +199,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	
 		//Validate Status Code
 			int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
-			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_201);
+			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
 	
 		//Write result 	
 			if (strStatusCode == RESPONSE_STATUS_CODE_200){
