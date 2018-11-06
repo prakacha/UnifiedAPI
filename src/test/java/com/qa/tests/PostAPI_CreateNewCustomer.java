@@ -202,7 +202,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
 	
 		//Write result 	
-			if (strStatusCode == RESPONSE_STATUS_CODE_200){
+			if (strStatusCode == RESPONSE_STATUS_CODE_201){
 				TestUtil.writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
 			}
 			else {
