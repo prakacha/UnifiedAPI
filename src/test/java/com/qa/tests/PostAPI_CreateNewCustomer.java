@@ -40,7 +40,13 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	RestClient restClient;
 	CloseableHttpResponse closeableHttpResponse;
 
-
+	
+// ExtentReport- startTest Method
+@BeforeTest
+	public static void custom_startTest() {
+		TestUtil.startTest();	
+	}	
+	
 // build API url	
 @BeforeMethod
 	public void setup() throws ClientProtocolException, IOException{
@@ -49,15 +55,8 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		serviceUrl_CreateCustomer = prop.getProperty("serviceURL_CreateCustomer");
 		serviceUrl_SearchCustomer = prop.getProperty("serviceURL_SearchCustomer");
 		url_Create = url_MasterAPI + serviceUrl_CreateCustomer;
-		url_Search = url_MasterAPI + serviceUrl_SearchCustomer;
-		
+		url_Search = url_MasterAPI + serviceUrl_SearchCustomer;	
 	}	//Method SetUp 
-
-// ExtentReport- startTest Method
-@BeforeTest
-	public static void custom_startTest() {
-		TestUtil.startTest();	
-	}
 	
 // POST API call to create customer
 @Test(priority = 0, invocationCount = 1)
@@ -68,8 +67,8 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			System.out.println("TEST#1: Create Customer");
 			System.out.println("-------------------------------------");
 			
+		//Start test	
 			TestUtil.startTest("test_Post_API_Create");
-			
 		//Create a hash map for passing header		
 			HashMap<String, String> headerMap = new HashMap<String, String>();
 			headerMap.put("Content-Type", "application/json");	// 'content header' as application/JSON
@@ -149,8 +148,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			//Pia/Hannu to update more on this
 			
 		//end test
-			TestUtil.endTest();
-							
+			TestUtil.endTest();	
 	} // Method postAPITest_Create 
 
 
@@ -212,17 +210,18 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		//retrieve response string 			
 			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
 			TestUtil.writeResult ("INFO", "Response String", responseString);
-		//endTest 
-			TestUtil.endTest();
+			
+		//end test
+			TestUtil.endTest();	
 			
 	} // Method postAPITest_Search
 
 
 
-//ExtentReport- getResult Method
+//ExtentReport- endTest Method
 @AfterMethod
 	public void custom_getResult() {
-//		TestUtil.getResult(result);
+
 	}
 
 

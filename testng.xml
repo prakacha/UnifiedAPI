@@ -4,6 +4,7 @@
 
 <listeners>
 <listener class-name="com.qa.listener.Test_Listener"/>
+<listener class-name="com.qa.listener.Retry_Listener"/>
 </listeners>
 
   <test name="Microservice API Automation Test">
