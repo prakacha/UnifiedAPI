@@ -59,7 +59,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	}	//Method SetUp 
 	
 // POST API call to create customer
-@Test(priority = 0, invocationCount = 1)
+@Test(priority = 0, invocationCount = 1, enabled = true)
 	public void test_Post_API_Create() throws ClientProtocolException, IOException {
 	
 			System.out.println("");
@@ -69,6 +69,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			
 		//Start test	
 			TestUtil.startTest("test_Post_API_Create");
+			TestUtil.writeResult ("INFO", "API", url_Create.toString());
 		//Create a hash map for passing header		
 			HashMap<String, String> headerMap = new HashMap<String, String>();
 			headerMap.put("Content-Type", "application/json");	// 'content header' as application/JSON
@@ -153,7 +154,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 
 
 //POST API call to search customer
-@Test(priority = 1, invocationCount = 1)
+@Test(priority = 1, invocationCount = 1, enabled = true)
 	public void test_Post_API_Search() throws ClientProtocolException, IOException {
 			System.out.println("");
 			System.out.println("");
@@ -162,6 +163,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			System.out.println("-------------------------------------");
 			
 			TestUtil.startTest("test_Post_API_Search");
+			TestUtil.writeResult ("INFO", "API", url_Search.toString());
 			
 		//Create a hash map for passing header		
 			HashMap<String, String> headerMap = new HashMap<String, String>();
