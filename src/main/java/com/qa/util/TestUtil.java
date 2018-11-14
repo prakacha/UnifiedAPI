@@ -14,12 +14,14 @@ import org.testng.ITestResult ;
 
 
 public class TestUtil {
-// This method parse the JSON and return string of data
+
 
 	//ExtentReport class object	
 	 static ExtentReports extent_report;
 	 static ExtentTest extent_test;
-	
+
+	 
+// To parse the JSON and return string of data
 	public static String getValueByJPath(JSONObject responsejson, String jpath){
 		Object obj = responsejson;
 		for(String s : jpath.split("/")) 
@@ -30,7 +32,8 @@ public class TestUtil {
 					obj = ((JSONArray) ((JSONObject) obj).get(s.split("\\[")[0])).get(Integer.parseInt(s.split("\\[")[1].replace("]", "")));
 		return obj.toString();
 		
-	} // method
+	} // method getValueByPath
+	
 	
 //Generate a random number	
 	public static int get_randomNumber(int upperLimit) {
@@ -43,7 +46,7 @@ public class TestUtil {
 	
 //Read data from JSON in the form of string
 	public static String get_JsonAsString(String strJsonFileName) {
-	    // strJsonFileName -- name of the JSOn file with extension
+	    // strJsonFileName -- name of the JSON file with extension
 		String JSONString = "";
 		try {
         	JSONString = new String(Files.readAllBytes( Paths.get(System.getProperty("user.dir")+"/src/main/java/com/qa/data/"+strJsonFileName+".json")));
@@ -53,6 +56,7 @@ public class TestUtil {
         	}
 		return JSONString;
 	} // Method get_JsonAsString
+	
 	
 // generate a random lower case string for a given length
 	public static String getRandomString(int stringLength) {		  
@@ -72,7 +76,7 @@ public class TestUtil {
 	} //Method getRandomString
 	
 
-	// write result in Console and ExtentReport with Expected and Actual
+// write result in Console and ExtentReport with Expected and Actual
 	public static void writeResult(String strResultType, String strOutputTitle,  String strExpectedOutput, String strActualOutput) {
 
 			//write to console 
@@ -92,7 +96,8 @@ public class TestUtil {
 		     }	 
 		} // Method WriteResult
 
-	//write result in Console and ExtentReport without any expected value
+	
+//write result in Console and ExtentReport without any expected value
 	public static void writeResult(String strResultType, String strOutputTitle, String strActualOutput) {
 
 			//write to console 
@@ -112,6 +117,7 @@ public class TestUtil {
 		     }	 
 		} // Method WriteResult	
 
+	
 //print Summary in extent-report	
 	public static void getResult(int intTestStatus, String strTestName){
 		if(intTestStatus == ITestResult.FAILURE){
@@ -125,23 +131,30 @@ public class TestUtil {
 		}
 	}// Method getResult
 	
+
+// start-test method of Extent report
 	public static void startTest()
 	{
 		extent_report = new ExtentReports(System.getProperty("user.dir")+"\\ExecutionResults.html", true);
 		extent_report.addSystemInfo("Suite Description", "API calls to MDM system");
 		extent_report.loadConfig(new File(System.getProperty("user.dir")+"\\src\\main\\java\\com\\qa\\extentReport\\extent-config.xml"));
 	}
+
 	
+// start-test method of Extent report
 	public static void startTest(String strTestName)
 	{	
 		extent_test = extent_report.startTest(strTestName);
 	}
 	
+
+// end-test method of Extent report
 	public static void endTest()
 	{
 	//endTest 	
 		extent_report.endTest(extent_test);
 		extent_report.flush();	
 	}
+
 	
 } // class
