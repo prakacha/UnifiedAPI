@@ -25,9 +25,10 @@ public class Retry_Listener implements IAnnotationTransformer{
 			      annotation.setEnabled(false);;
 			    }	
 		}
+		
 	// retry the failed test cases
 		annotation.setRetryAnalyzer(RetryAnalyzer.class);	
 		
-		
 	} //Method transform
+	
 } //class
