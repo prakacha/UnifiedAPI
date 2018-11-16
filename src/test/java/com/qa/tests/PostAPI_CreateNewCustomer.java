@@ -4,6 +4,7 @@ package com.qa.tests;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -37,6 +38,9 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	String randomString_firstName;
 	String randomString_LastName;
 	String randomString_eMail;
+	String authorization_username;
+	String authorization_password;
+	String authorization_Value;
 	RestClient restClient;
 	CloseableHttpResponse closeableHttpResponse;
 
@@ -51,11 +55,16 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 @BeforeMethod
 	public void setup() throws ClientProtocolException, IOException{
 		testBase = new TestBase();
+	//uri
 		url_MasterAPI = prop.getProperty("MasterAPI_URL");
 		serviceUrl_CreateCustomer = prop.getProperty("serviceURL_CreateCustomer");
 		serviceUrl_SearchCustomer = prop.getProperty("serviceURL_SearchCustomer");
 		url_Create = url_MasterAPI + serviceUrl_CreateCustomer;
 		url_Search = url_MasterAPI + serviceUrl_SearchCustomer;	
+	// Authorization
+		authorization_username = prop.getProperty("username");
+		authorization_password = prop.getProperty("password");
+		authorization_Value = Base64.getEncoder().encodeToString((authorization_username+":"+authorization_password).getBytes("utf-8"));
 	}	//Method SetUp 
 	
 // POST API call to create customer
@@ -73,6 +82,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		//Create a hash map for passing header		
 			HashMap<String, String> headerMap = new HashMap<String, String>();
 			headerMap.put("Content-Type", "application/json");	// 'content header' as application/JSON
+			headerMap.put("Authorization", authorization_Value);	// user-name and password with base64 encryption separated by colon
 			//headerMap.put("userName", "UserName_Value");		// pass value like user-name only if required
 			//headerMap.put("Password", "Password_Value");		// pass value like password only if required					
 						
@@ -168,6 +178,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		//Create a hash map for passing header		
 			HashMap<String, String> headerMap = new HashMap<String, String>();
 			headerMap.put("Content-Type", "application/json");	// 'content header' as application/JSON
+			headerMap.put("Authorization", authorization_Value);	// user-name and password with base64 encryption separated by colon
 			//headerMap.put("userName", "UserName_Value");		// pass value like user-name only if required
 			//headerMap.put("Password", "Password_Value");		// pass value like password only if required
 					
