@@ -15,7 +15,7 @@ public class Retry_Listener implements IAnnotationTransformer{
 		
 	//to create multiple customer
 		TestBase_transform = new TestBase();
-		String str_customer_Count = TestBase_transform.prop.getProperty("CreateCustomer_Count");
+		String str_customer_Count = TestBase_transform.prop.getProperty("createCustomer_Count");
 		int int_customer_Count = Integer.parseInt(str_customer_Count);
 		if(int_customer_Count > 1) {
 			if ("test_Post_API_Create".equals(testMethod.getName())) {			// run only create-customer 

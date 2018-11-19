@@ -41,6 +41,9 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	String authorization_username;
 	String authorization_password;
 	String authorization_Value;
+	String generate_Mail_Id;
+	String generate_FirstName;
+	String generate_LastName;
 	RestClient restClient;
 	CloseableHttpResponse closeableHttpResponse;
 
@@ -51,7 +54,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		TestUtil.startTest();	
 	}	
 	
-// build API url	
+// build API url and Authorization
 @BeforeMethod
 	public void setup() throws ClientProtocolException, IOException{
 		testBase = new TestBase();
@@ -65,6 +68,10 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		authorization_username = prop.getProperty("username");
 		authorization_password = prop.getProperty("password");
 		authorization_Value = Base64.getEncoder().encodeToString((authorization_username+":"+authorization_password).getBytes("utf-8"));
+	//Automated data generation
+		generate_Mail_Id = prop.getProperty("generate_Random_Mail_Id");
+		generate_FirstName = prop.getProperty("generate_Random_FirstName");
+		generate_LastName = prop.getProperty("generate_Random_LastName");
 	}	//Method SetUp 
 	
 // POST API call to create customer
@@ -99,33 +106,53 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	        
 	    //retrieve two level element
 	        JSONObject responseJson_basicCustomerInfo = responseJson.getJSONObject("basicCustomerInfo");
-	        responseJson_basicCustomerInfo.remove("firstName");
+	        
 	        
 	   //get a random string for first name
-			randomString_firstName = "test_"+TestUtil.getRandomString(5);
-	        responseJson_basicCustomerInfo.put("firstName", randomString_firstName);
-	        TestUtil.writeResult ("INFO", "First Name", randomString_firstName);
+	        if (Boolean.parseBoolean(generate_FirstName.toLowerCase().trim())==true) {
+	        	responseJson_basicCustomerInfo.remove("firstName");
+				randomString_firstName = "test_"+TestUtil.getRandomString(5);
+		        responseJson_basicCustomerInfo.put("firstName", randomString_firstName);
+		        
+	        }
+	        else {
+	        	randomString_firstName = responseJson_basicCustomerInfo.get("firstName").toString();
+	        }
+	        	TestUtil.writeResult ("INFO", "First Name", randomString_firstName);	
 	        //System.out.println("Response with randomly generated firstName " + responseJson);
 	        
-	    //get a random string for last name     
-	        randomString_LastName = "test_"+ TestUtil.getRandomString(5);
-	        responseJson_basicCustomerInfo.remove("lastName");
-	        responseJson_basicCustomerInfo.put("lastName", randomString_LastName);
-	        TestUtil.writeResult ("INFO", "Last Name", randomString_LastName);
 	        
-	     //retrieve two level array-element  
-	        JSONObject responseJson_CustomerContactInfo = responseJson.getJSONObject("customerContactInfo");
-	        JSONArray responseJson_Array_Contacts = responseJson_CustomerContactInfo.getJSONArray("contacts");
-	        //System.out.println("Contacts Array item --- >"+responseJson_Array_Contacts.get(0));
-	        JSONObject responseJson_Contacts = responseJson_Array_Contacts.getJSONObject(0);
-	        JSONObject responseJson_Contact = responseJson_Contacts.getJSONObject("contact");
-	       //System.out.println("e-Mail: "+responseJson_Contact.get("value"));	//retrieve email address
-	        int randomNumber_email = TestUtil.get_randomNumber(9999999);	
-	        randomString_eMail = "Test_"+randomNumber_email+"@test.com";	//get a random value for email-
-	        responseJson_Contact.remove("value");
-	        responseJson_Contact.put("value", randomString_eMail);
-	        TestUtil.writeResult ("INFO", "eMail", randomString_eMail);
+	    //get a random string for last name
+	        if (Boolean.parseBoolean(generate_LastName.toLowerCase().trim())==true) {
+		        randomString_LastName = "test_"+ TestUtil.getRandomString(5);
+		        responseJson_basicCustomerInfo.remove("lastName");
+		        responseJson_basicCustomerInfo.put("lastName", randomString_LastName);		        
+	        }
+	        else {
+	        	randomString_LastName = responseJson_basicCustomerInfo.get("lastName").toString();
+	        }
+	        	TestUtil.writeResult ("INFO", "Last Name", randomString_LastName);	        
 	        
+	     //retrieve two level array-element    
+		        JSONObject responseJson_CustomerContactInfo = responseJson.getJSONObject("customerContactInfo");
+		        JSONArray responseJson_Array_Contacts = responseJson_CustomerContactInfo.getJSONArray("contacts");
+		        //System.out.println("Contacts Array item --- >"+responseJson_Array_Contacts.get(0));
+		        JSONObject responseJson_Contacts = responseJson_Array_Contacts.getJSONObject(0);
+		        JSONObject responseJson_Contact = responseJson_Contacts.getJSONObject("contact");
+		        //System.out.println("e-Mail: "+responseJson_Contact.get("value"));	//retrieve email address
+		   if (Boolean.parseBoolean(generate_Mail_Id.toLowerCase().trim())==true) {     
+		        int randomNumber_email = TestUtil.get_randomNumber(9999999);	
+		        randomString_eMail = "Test_"+randomNumber_email+"@test.com";	//get a random value for email-
+		        responseJson_Contact.remove("value");
+		        responseJson_Contact.put("value", randomString_eMail);		        
+	        }
+		   
+		   else {
+			   	randomString_eMail = responseJson_Contact.get("value").toString(); 
+		   	}
+		   		TestUtil.writeResult ("INFO", "eMail", randomString_eMail);
+		        
+		        
 	    //Convert JSONObject back into String        
 	        usersJSONString = responseJson.toString();
 	        TestUtil.writeResult ("INFO", "Request String", usersJSONString);
