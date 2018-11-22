@@ -11,6 +11,9 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
@@ -21,6 +24,8 @@ import org.testng.annotations.AfterTest;
 import com.qa.base.TestBase;
 import com.qa.client.RestClient;
 import com.qa.util.TestUtil;
+import com.qa.util.ReadEmails;
+
 
 @Listeners(com.qa.listener.Test_Listener.class)
 
@@ -35,6 +40,8 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	String url_MasterAPI;
 	String url_Create;
 	String url_Search;
+	String url_verifyEmail;
+	String strMailFrom;
 	String randomString_firstName;
 	String randomString_LastName;
 	String randomString_eMail;
@@ -102,23 +109,21 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	
 	    //retrieve one level element from JSON
 	        Object strAgreementtype = responseJson.get("agreementType");
-	        TestUtil.writeResult ("INFO", "AgreementType", strAgreementtype.toString());
-	        
+	        TestUtil.writeResult ("INFO", "AgreementType", strAgreementtype.toString());		//write result
+	             
 	    //retrieve two level element
-	        JSONObject responseJson_basicCustomerInfo = responseJson.getJSONObject("basicCustomerInfo");
-	        
+	        JSONObject responseJson_basicCustomerInfo = responseJson.getJSONObject("basicCustomerInfo");	        
 	        
 	   //get a random string for first name
 	        if (Boolean.parseBoolean(generate_FirstName.toLowerCase().trim())==true) {
 	        	responseJson_basicCustomerInfo.remove("firstName");
 				randomString_firstName = "test_"+TestUtil.getRandomString(5);
-		        responseJson_basicCustomerInfo.put("firstName", randomString_firstName);
-		        
+		        responseJson_basicCustomerInfo.put("firstName", randomString_firstName);    
 	        }
 	        else {
 	        	randomString_firstName = responseJson_basicCustomerInfo.get("firstName").toString();
 	        }
-	        	TestUtil.writeResult ("INFO", "First Name", randomString_firstName);	
+	        	TestUtil.writeResult ("INFO", "First Name", randomString_firstName);		//write result
 	        //System.out.println("Response with randomly generated firstName " + responseJson);
 	        
 	        
@@ -131,7 +136,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	        else {
 	        	randomString_LastName = responseJson_basicCustomerInfo.get("lastName").toString();
 	        }
-	        	TestUtil.writeResult ("INFO", "Last Name", randomString_LastName);	        
+	        	TestUtil.writeResult ("INFO", "Last Name", randomString_LastName);	//write result	        
 	        
 	     //retrieve two level array-element    
 		        JSONObject responseJson_CustomerContactInfo = responseJson.getJSONObject("customerContactInfo");
@@ -140,9 +145,14 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		        JSONObject responseJson_Contacts = responseJson_Array_Contacts.getJSONObject(0);
 		        JSONObject responseJson_Contact = responseJson_Contacts.getJSONObject("contact");
 		        //System.out.println("e-Mail: "+responseJson_Contact.get("value"));	//retrieve email address
+		 	   // get a random string for mail id 		        
 		   if (Boolean.parseBoolean(generate_Mail_Id.toLowerCase().trim())==true) {     
 		        int randomNumber_email = TestUtil.get_randomNumber(9999999);	
-		        randomString_eMail = "Test_"+randomNumber_email+"@test.com";	//get a random value for email-
+		        randomString_eMail = "keskoautomation+"+randomNumber_email+"@gmail.com";	//get a random value for email-
+		        // note: if your id is auto@gmail.com, you could send mail to auto+mono@gmail.com or auto+dual@gmail.com.
+		        if (responseJson.has("emailId")) {		//as this emailID was not there in Main JSON
+		        	responseJson.put("emailId", randomString_eMail);
+		        }
 		        responseJson_Contact.remove("value");
 		        responseJson_Contact.put("value", randomString_eMail);		        
 	        }
@@ -150,7 +160,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		   else {
 			   	randomString_eMail = responseJson_Contact.get("value").toString(); 
 		   	}
-		   		TestUtil.writeResult ("INFO", "eMail", randomString_eMail);
+		   		TestUtil.writeResult ("INFO", "eMail", randomString_eMail);		//write result
 		        
 		        
 	    //Convert JSONObject back into String        
@@ -257,6 +267,68 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	} // Method postAPITest_Search
 
 
+//POST API call to verify email
+@Test(priority = 2, invocationCount = 1, enabled = true)
+	public void test_Get_API_VerifyEmail() throws ClientProtocolException, IOException, InterruptedException {	
+		System.out.println("");
+		System.out.println("");
+		System.out.println("-------------------------------------");
+		System.out.println("TEST#3: verify email");
+		System.out.println("-------------------------------------");
+		TestUtil.startTest("test_Get_API_VerifyEmail");
+		strMailFrom = prop.getProperty("mail_from");
+	// fetch email content 
+		Thread.sleep(20000);	// receiving the mail in INBOX takes time
+		ReadEmails reademail = new ReadEmails();
+		String strMailContent = reademail.readMails(randomString_firstName, strMailFrom, randomString_eMail);
+		//System.out.println(strMailContent);
+		if (strMailContent.contains("true")) {
+	//using JSOUP library to parse the verification link	
+			Document doc = Jsoup.parse(strMailContent);
+			Element link = doc.select("a").first();
+			//String mailText = doc.body().text();	// email body 
+			url_verifyEmail = link.attr("href"); // retrieves verification link with token
+			//String linkText = link.text(); 	// text attached with the hyper-link
+			TestUtil.writeResult ("INFO", "API", url_verifyEmail.toString());
+		//Create a hash map for passing header		
+			HashMap<String, String> headerMap = new HashMap<String, String>();
+			headerMap.put("Content-Type", "application/json");	// 'content header' as application/JSON
+			//headerMap.put("Authorization", authorization_Value);	// user-name and password with base64 encryption separated by colon
+			//headerMap.put("userName", "UserName_Value");		// pass value like user-name only if required
+			//headerMap.put("Password", "Password_Value");		// pass value like password only if required
+			
+		//GET the request
+			restClient = new RestClient();	
+			closeableHttpResponse = restClient.get(url_verifyEmail, headerMap);		// hit API to verify mail
+			
+			
+		//Validate Status Code
+			int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
+			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
+
+		//Write result 	
+			if (strStatusCode == RESPONSE_STATUS_CODE_200){
+				TestUtil.writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+			}
+			else {
+				TestUtil.writeResult("FAIL", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+			}
+			
+		//retrieve response string 			
+			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
+			TestUtil.writeResult ("INFO", "Response String", responseString);
+			
+			} //if
+		
+		else {
+			TestUtil.writeResult ("FAIL", "Error", strMailContent );
+			Assert.fail("Mail not found in mailbox.");	
+			} //else
+		
+	//end test
+		TestUtil.endTest();	
+		
+}	// Method test_Get_API_VerifyEmail
 
 //ExtentReport- endTest Method
 @AfterMethod
