@@ -25,7 +25,7 @@ import com.qa.base.TestBase;
 import com.qa.client.RestClient;
 import com.qa.util.TestUtil;
 import com.qa.util.ReadEmails;
-
+import com.qa.util.UpdateJSON;
 
 @Listeners(com.qa.listener.Test_Listener.class)
 
@@ -34,6 +34,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 // declaration of class objects	
 	//user defined Class object
 	TestBase testBase;
+	UpdateJSON updatejson;
 	String serviceUrl_CreateCustomer;
 	String serviceUrl_SearchCustomer;
 	String apiUrl_CreateCustomer;
@@ -51,8 +52,10 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	String generate_Mail_Id;
 	String generate_FirstName;
 	String generate_LastName;
+	String mail_userName;
 	RestClient restClient;
 	CloseableHttpResponse closeableHttpResponse;
+
 
 	
 // ExtentReport- startTest Method
@@ -71,10 +74,11 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		serviceUrl_SearchCustomer = prop.getProperty("serviceURL_SearchCustomer");
 		url_Create = url_MasterAPI + serviceUrl_CreateCustomer;
 		url_Search = url_MasterAPI + serviceUrl_SearchCustomer;	
-	// Authorization
+	// Header Authorization
 		authorization_username = prop.getProperty("username");
 		authorization_password = prop.getProperty("password");
 		authorization_Value = Base64.getEncoder().encodeToString((authorization_username+":"+authorization_password).getBytes("utf-8"));
+		mail_userName = prop.getProperty("mail_username");	// get customer mail ID
 	//Automated data generation
 		generate_Mail_Id = prop.getProperty("generate_Random_Mail_Id");
 		generate_FirstName = prop.getProperty("generate_Random_FirstName");
@@ -146,9 +150,10 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		        JSONObject responseJson_Contact = responseJson_Contacts.getJSONObject("contact");
 		        //System.out.println("e-Mail: "+responseJson_Contact.get("value"));	//retrieve email address
 		 	   // get a random string for mail id 		        
-		   if (Boolean.parseBoolean(generate_Mail_Id.toLowerCase().trim())==true) {     
+		   if (Boolean.parseBoolean(generate_Mail_Id.toLowerCase().trim())==true) {
+			   	String[] arr_mailUserName = mail_userName.split("@");
 		        int randomNumber_email = TestUtil.get_randomNumber(9999999);	
-		        randomString_eMail = "keskoautomation+"+randomNumber_email+"@gmail.com";	//get a random value for email-
+		        randomString_eMail = arr_mailUserName[0]+"+"+randomNumber_email+"@"+arr_mailUserName[1];	//get a random value for email
 		        // note: if your id is auto@gmail.com, you could send mail to auto+mono@gmail.com or auto+dual@gmail.com.
 		        if (responseJson.has("emailId")) {		//as this emailID was not there in Main JSON
 		        	responseJson.put("emailId", randomString_eMail);
@@ -179,8 +184,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			
 		//Validate Status Code
 			int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
-			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
-							
+					
 		//Write result 		
 			if (strStatusCode == RESPONSE_STATUS_CODE_200){
 				TestUtil.writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
@@ -191,9 +195,10 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		//retrieve response string 			
 			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
 			TestUtil.writeResult ("INFO", "Response String", responseString);
+			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
 			
 		//Validate the Response
-			//Pia/Hannu to update more on this
+			//
 			
 		//end test
 			TestUtil.endTest();	
@@ -247,7 +252,6 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	
 		//Validate Status Code
 			int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
-			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
 	
 		//Write result 	
 			if (strStatusCode == RESPONSE_STATUS_CODE_200){
@@ -260,6 +264,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		//retrieve response string 			
 			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
 			TestUtil.writeResult ("INFO", "Response String", responseString);
+			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
 			
 		//end test
 			TestUtil.endTest();	
@@ -304,7 +309,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			
 		//Validate Status Code
 			int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
-			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
+			
 
 		//Write result 	
 			if (strStatusCode == RESPONSE_STATUS_CODE_200){
@@ -317,8 +322,8 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		//retrieve response string 			
 			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
 			TestUtil.writeResult ("INFO", "Response String", responseString);
-			
-			} //if
+			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);	
+		} //if
 		
 		else {
 			TestUtil.writeResult ("FAIL", "Error", strMailContent );
@@ -330,6 +335,55 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		
 }	// Method test_Get_API_VerifyEmail
 
+
+
+//PUT API call to update customer information // updates customer consent, agreement and contact information
+@Test(priority = 3, invocationCount = 1, enabled = true)
+	public void test_Put_API_UpdateCustomerInfo() throws ClientProtocolException, IOException, InterruptedException {	
+		System.out.println("");
+		System.out.println("");
+		System.out.println("-------------------------------------");
+		System.out.println("TEST#4: Update Customer Information");
+		System.out.println("-------------------------------------");
+		TestUtil.startTest("test_Put_API_UpdateCustomerInfo");
+		TestUtil.writeResult ("INFO", "API", url_Create.toString());
+	//Create a hash map for passing header		
+		HashMap<String, String> headerMap = new HashMap<String, String>();
+		headerMap.put("Content-Type", "application/json");	// 'content header' as application/JSON
+		headerMap.put("Authorization", authorization_Value);	// user-name and password with base64 encryption separated by colon
+
+	// Edit the JSON data and get the updated data
+		String usersJSONString = "";
+		updatejson = new UpdateJSON();
+		usersJSONString = updatejson.updateCustomerDetails();	//update the CreateCustomer JSON 
+		
+		
+	//POST the request
+		restClient = new RestClient();	
+		closeableHttpResponse = restClient.put(url_Create, usersJSONString, headerMap);		// hit API
+
+	//Validate Status Code
+		int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
+
+	//Write result 	
+		if (strStatusCode == RESPONSE_STATUS_CODE_200){
+			TestUtil.writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+		}
+		else {
+			TestUtil.writeResult("FAIL", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+		}	
+		
+	//retrieve response string 			
+		String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
+		TestUtil.writeResult ("INFO", "Response String", responseString);
+		Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);	
+			
+	//end test
+			TestUtil.endTest();	
+				
+		}	// Method test_Get_API_VerifyEmail
+
+
 //ExtentReport- endTest Method
 @AfterMethod
 	public void custom_getResult() {
@@ -340,6 +394,11 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 //ExtentReport- endTest Method
 @AfterTest
 	public static void custom_endTest() {
+		System.out.println("");
+		System.out.println("");
+		System.out.println("-------------------------------------");
+		System.out.println("Summary:");
+		System.out.println("-------------------------------------");
 		TestUtil.endTest();
 	}
 		
