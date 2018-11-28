@@ -1,17 +1,14 @@
 package com.qa.util;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 import javax.mail.Address;
-import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -39,9 +36,10 @@ public class ReadEmails extends TestBase{
 	Boolean strMailFound = false;
 	
 
-	public String readMails(String strFirstName, String strFrom, String strTo) throws IOException {
+	public String readMails(String strFirstName, String strFrom, String strTo) throws IOException, InterruptedException {
 
 		properties = new Properties();
+		int timer =150;	// check for mail in Inbox for given seconds
 	//set up property	
 		properties.setProperty("mail.host", mail_hostID);	//"imap.gmail.com" Internet Message Access Protocol(IMAP) for reading mails
 		properties.setProperty("mail.port", mail_port);	// g-mail port number "995"
@@ -59,43 +57,73 @@ public class ReadEmails extends TestBase{
 			store.connect();
 			inbox = store.getFolder("INBOX");
 			inbox.open(Folder.READ_ONLY);
-			
-			Message messages[] = inbox.search(new FlagTerm(new Flags(Flag.SEEN), false)); 
-			//System.out.println("Number of mails = " + messages.length);
-			if (messages.length > 0 ) {
-				for (int i = 0; i<messages.length ; i++) { 
-					Message message = messages[i]; 
-					Address[] messageTO = message.getRecipients(RecipientType.TO);	//Receiver email address
-					Address[] from = message.getFrom();		// sender email address
-					String strAddressTo = messageTO[0].toString().trim();
-					String strAddressFrom = from[0].toString().trim();	//
-					if (strAddressFrom.equals(strFrom)) {				
-						if (strAddressTo.equals(strTo)) {
-							strMsgContent = message.getContent().toString();
-							if (strMsgContent.contains(strFirstName)) {
-								strMailFound = true;
-								strReturnValue = strMsgContent.toString();	
+			System.out.println("wait a moment..");
+			System.out.println("searching for mail...");
+			do {	
+				Message messages[] = inbox.search(new FlagTerm(new Flags(Flag.SEEN), false)); 
+				//System.out.println("Number of mails = " + messages.length);
+				if (messages.length > 0 ) {
+					for (int i = 0; i<messages.length ; i++) { 
+						Message message = messages[i]; 
+						Address[] messageTO = message.getRecipients(RecipientType.TO);	//Receiver email address
+						Address[] from = message.getFrom();		// sender email address
+						String strAddressTo = messageTO[0].toString().trim();
+						String strAddressFrom = from[0].toString().trim();	//
+						if (strAddressFrom.equals(strFrom)) {		// search for address 'FROM'		
+							if (strAddressTo.equals(strTo)) {		// search for address 'TO'	
+								strMsgContent = message.getContent().toString();
+								if (strMsgContent.contains(strFirstName)) {
+									strMailFound = true;
+									strReturnValue = strMsgContent.toString();
+									break;
+								} // if
 							} // if
+							else {
+								if (messages.length-i == 1) {
+									strMailFound = false;
+									strReturnValue = "No mail send to '"+ strTo +"'";
+								} //if
+							//retry mail-check	
+								timer = timer - 1;
+								if (timer<0) {
+									break;
+								}
+								else {
+									Thread.sleep(1000);
+								}
+							} //else	
 						} // if
 						else {
 							if (messages.length-i == 1) {
 								strMailFound = false;
-								strReturnValue = "No mail send to '"+ strTo +"'";
-							} //if 
-						} //else	
-					} // if
+								strReturnValue = "No mail received from '"+ strFrom +"'";
+							} //if
+						//retry mail-check	
+							timer = timer - 1;
+							if (timer<0) {
+								break;
+							}
+							else {
+								Thread.sleep(1000);
+							}
+						} // else	
+					} //for
+				} //if
+				else {
+					strMailFound = false;
+					strReturnValue = "Inbox is empty";
+					timer = timer - 1;
+					if (timer<0) {
+						break;
+					}
 					else {
-						if (messages.length-i == 1) {
-							strMailFound = false;
-							strReturnValue = "No mail received from '"+ strFrom +"'";
-						} //if
-					} // else	
-				} //for
-			} //if
-			else {
-				strMailFound = false;
-				strReturnValue = "Inbox is empty";
-			} // else
+						Thread.sleep(1000);
+					}
+				} // else
+				if (strMailFound.equals(true)) {
+					break;
+				}
+			} while (timer>0);
 			inbox.close(true); 
 			store.close(); 
 			} //Try 
@@ -110,6 +138,7 @@ public class ReadEmails extends TestBase{
 	} // Method readMails 
 
 	
+/*
 //------------------------	
 // below methods have not been used as of now---
 		public void processMessageBody(Message message) { 
@@ -163,12 +192,15 @@ public class ReadEmails extends TestBase{
 		catch (MessagingException e) { 
 			e.printStackTrace(); 
 			}  
-		} 
+		} //method  procesMultiPart	
+		
+*/
 		
 //for stand-alone run------------------------
 //	public static void main(String[] args) { 
 //		ReadEmails sample = new ReadEmails(); 
 //		sample.readMails(); 
-//		} 	
+//		} 
 
+	
 }

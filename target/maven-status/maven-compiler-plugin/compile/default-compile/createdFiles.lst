@@ -1,6 +1,7 @@
 com\qa\listener\Test_Listener.class
 com\qa\util\TestUtil.class
 com\qa\listener\RetryAnalyzer.class
+com\qa\util\UpdateJSON.class
 com\qa\client\RestClient.class
 com\qa\util\ReadEmails$1.class
 com\qa\data\Users.class

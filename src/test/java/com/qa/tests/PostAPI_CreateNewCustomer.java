@@ -77,7 +77,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	// Header Authorization
 		authorization_username = prop.getProperty("username");
 		authorization_password = prop.getProperty("password");
-		authorization_Value = Base64.getEncoder().encodeToString((authorization_username+":"+authorization_password).getBytes("utf-8"));
+		authorization_Value = "Basic "+Base64.getEncoder().encodeToString((authorization_username+":"+authorization_password).getBytes("utf-8"));
 		mail_userName = prop.getProperty("mail_username");	// get customer mail ID
 	//Automated data generation
 		generate_Mail_Id = prop.getProperty("generate_Random_Mail_Id");
@@ -101,8 +101,8 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			HashMap<String, String> headerMap = new HashMap<String, String>();
 			headerMap.put("Content-Type", "application/json");	// 'content header' as application/JSON
 			headerMap.put("Authorization", authorization_Value);	// user-name and password with base64 encryption separated by colon
-			//headerMap.put("userName", "UserName_Value");		// pass value like user-name only if required
-			//headerMap.put("Password", "Password_Value");		// pass value like password only if required					
+			//headerMap.put("userName", authorization_username);		// pass value like user-name only if required
+			//headerMap.put("Password", authorization_password);		// pass value like password only if required					
 						
 		// Read data from JSON in the form of string 
 			String usersJSONString = "";
@@ -283,7 +283,6 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		TestUtil.startTest("test_Get_API_VerifyEmail");
 		strMailFrom = prop.getProperty("mail_from");
 	// fetch email content 
-		Thread.sleep(20000);	// receiving the mail in INBOX takes time
 		ReadEmails reademail = new ReadEmails();
 		String strMailContent = reademail.readMails(randomString_firstName, strMailFrom, randomString_eMail);
 		//System.out.println(strMailContent);
