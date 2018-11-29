@@ -53,13 +53,13 @@ public class ReadEmails extends TestBase{
 					}	
 				);	
 		try {
-			store = session.getStore("imaps");
-			store.connect();
-			inbox = store.getFolder("INBOX");
-			inbox.open(Folder.READ_ONLY);
 			System.out.println("wait a moment..");
 			System.out.println("searching for mail...");
-			do {	
+			do {				//refresh and check mails for given seconds
+				store = session.getStore("imaps");
+				store.connect();
+				inbox = store.getFolder("INBOX");
+				inbox.open(Folder.READ_ONLY);
 				Message messages[] = inbox.search(new FlagTerm(new Flags(Flag.SEEN), false)); 
 				//System.out.println("Number of mails = " + messages.length);
 				if (messages.length > 0 ) {
@@ -83,14 +83,6 @@ public class ReadEmails extends TestBase{
 									strMailFound = false;
 									strReturnValue = "No mail send to '"+ strTo +"'";
 								} //if
-							//retry mail-check	
-								timer = timer - 1;
-								if (timer<0) {
-									break;
-								}
-								else {
-									Thread.sleep(1000);
-								}
 							} //else	
 						} // if
 						else {
@@ -98,20 +90,13 @@ public class ReadEmails extends TestBase{
 								strMailFound = false;
 								strReturnValue = "No mail received from '"+ strFrom +"'";
 							} //if
-						//retry mail-check	
-							timer = timer - 1;
-							if (timer<0) {
-								break;
-							}
-							else {
-								Thread.sleep(1000);
-							}
 						} // else	
 					} //for
 				} //if
 				else {
 					strMailFound = false;
 					strReturnValue = "Inbox is empty";
+					//retry mail-check
 					timer = timer - 1;
 					if (timer<0) {
 						break;
@@ -121,7 +106,17 @@ public class ReadEmails extends TestBase{
 					}
 				} // else
 				if (strMailFound.equals(true)) {
-					break;
+					break; //do loop break
+				}
+				else {
+					//retry mail-check	
+					timer = timer - 1;
+					if (timer<0) {
+						break;	
+					}
+					else {
+						Thread.sleep(1000);
+					}
 				}
 			} while (timer>0);
 			inbox.close(true); 

@@ -88,7 +88,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 // POST API call to create customer
 @Test(priority = 0, invocationCount = 1, enabled = true)
 	public void test_Post_API_Create() throws ClientProtocolException, IOException {
-	
+			
 			System.out.println("");
 			System.out.println("-------------------------------------");
 			System.out.println("TEST#1: Create Customer");
