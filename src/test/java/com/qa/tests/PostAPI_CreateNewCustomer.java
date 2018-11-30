@@ -54,7 +54,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	String generate_LastName;
 	String mail_userName;
 	RestClient restClient;
-	CloseableHttpResponse closeableHttpResponse;
+	
 
 
 	
@@ -88,6 +88,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 // POST API call to create customer
 @Test(priority = 0, invocationCount = 1, enabled = true)
 	public void test_Post_API_Create() throws ClientProtocolException, IOException {
+			CloseableHttpResponse closeableHttpResponse_Create;
 			
 			System.out.println("");
 			System.out.println("-------------------------------------");
@@ -180,10 +181,10 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	       
 	    //POST the request
 			restClient = new RestClient();	
-			closeableHttpResponse = restClient.post(url_Create, usersJSONString, headerMap);		// hit API
+			closeableHttpResponse_Create = restClient.post(url_Create, usersJSONString, headerMap);		// hit API
 			
 		//Validate Status Code
-			int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
+			int strStatusCode = closeableHttpResponse_Create.getStatusLine().getStatusCode();
 					
 		//Write result 		
 			if (strStatusCode == RESPONSE_STATUS_CODE_200){
@@ -193,7 +194,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 				TestUtil.writeResult("FAIL", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
 			}
 		//retrieve response string 			
-			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
+			String responseString = EntityUtils.toString(closeableHttpResponse_Create.getEntity(),"UTF-8" );	//return the response in string format
 			TestUtil.writeResult ("INFO", "Response String", responseString);
 			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
 			
@@ -205,13 +206,80 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	} // Method postAPITest_Create 
 
 
-//POST API call to search customer
+
+//POST API call to verify email
 @Test(priority = 1, invocationCount = 1, enabled = true)
-	public void test_Post_API_Search() throws ClientProtocolException, IOException {
+	public void test_Get_API_VerifyEmail() throws ClientProtocolException, IOException, InterruptedException {	
+		CloseableHttpResponse closeableHttpResponse_VerifyMail;
+		System.out.println("");
+		System.out.println("");
+		System.out.println("-------------------------------------");
+		System.out.println("TEST#2: verify email");
+		System.out.println("-------------------------------------");
+		TestUtil.startTest("test_Get_API_VerifyEmail");
+		strMailFrom = prop.getProperty("mail_from");
+	// fetch email content 
+		ReadEmails reademail = new ReadEmails();
+		String strMailContent = reademail.readMails(randomString_firstName, strMailFrom, randomString_eMail);
+		//System.out.println(strMailContent);
+		if (strMailContent.contains("true")) {
+	//using JSOUP library to parse the verification link	
+			Document doc = Jsoup.parse(strMailContent);
+			Element link = doc.select("a").first();
+			//String mailText = doc.body().text();	// email body 
+			url_verifyEmail = link.attr("href"); // retrieves verification link with token
+			//String linkText = link.text(); 	// text attached with the hyper-link
+			TestUtil.writeResult ("INFO", "API", url_verifyEmail.toString());
+		//Create a hash map for passing header		
+			HashMap<String, String> headerMap = new HashMap<String, String>();
+			headerMap.put("Content-Type", "application/json");	// 'content header' as application/JSON
+			//headerMap.put("Authorization", authorization_Value);	// user-name and password with base64 encryption separated by colon
+			//headerMap.put("userName", "UserName_Value");		// pass value like user-name only if required
+			//headerMap.put("Password", "Password_Value");		// pass value like password only if required
+			
+		//GET the request
+			restClient = new RestClient();	
+			closeableHttpResponse_VerifyMail = restClient.get(url_verifyEmail, headerMap);		// hit API to verify mail
+			
+			
+		//Validate Status Code
+			int strStatusCode = closeableHttpResponse_VerifyMail.getStatusLine().getStatusCode();
+			
+
+		//Write result 	
+			if (strStatusCode == RESPONSE_STATUS_CODE_200){
+				TestUtil.writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+			}
+			else {
+				TestUtil.writeResult("FAIL", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
+			}
+			
+		//retrieve response string 			
+			String responseString = EntityUtils.toString(closeableHttpResponse_VerifyMail.getEntity(),"UTF-8" );	//return the response in string format
+			TestUtil.writeResult ("INFO", "Response String", responseString);
+			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);	
+		} //if
+		
+		else {
+			TestUtil.writeResult ("FAIL", "Error", strMailContent );
+			Assert.fail("Mail not found in mailbox.");	
+			} //else
+		
+	//end test
+		TestUtil.endTest();	
+		
+}	// Method test_Get_API_VerifyEmail
+
+
+
+//POST API call to search customer
+@Test(priority = 2, invocationCount = 1, enabled = true)
+	public void test_Post_API_Search() throws ClientProtocolException, IOException, InterruptedException {
+			CloseableHttpResponse closeableHttpResponse_Search;
 			System.out.println("");
 			System.out.println("");
 			System.out.println("-------------------------------------");
-			System.out.println("TEST#2: Search Customer");
+			System.out.println("TEST#3: Search Customer");
 			System.out.println("-------------------------------------");
 			
 			TestUtil.startTest("test_Post_API_Search");
@@ -245,13 +313,13 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }    
-	        
+
 	    //POST the request
 			restClient = new RestClient();	
-			closeableHttpResponse = restClient.post(url_Search, usersJSONString, headerMap);		// hit API
+			closeableHttpResponse_Search = restClient.post(url_Search, usersJSONString, headerMap);		// hit API
 	
 		//Validate Status Code
-			int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
+			int strStatusCode = closeableHttpResponse_Search.getStatusLine().getStatusCode();
 	
 		//Write result 	
 			if (strStatusCode == RESPONSE_STATUS_CODE_200){
@@ -262,7 +330,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 			}
 			
 		//retrieve response string 			
-			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
+			String responseString = EntityUtils.toString(closeableHttpResponse_Search.getEntity(),"UTF-8" );	//return the response in string format
 			TestUtil.writeResult ("INFO", "Response String", responseString);
 			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);
 			
@@ -272,73 +340,11 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 	} // Method postAPITest_Search
 
 
-//POST API call to verify email
-@Test(priority = 2, invocationCount = 1, enabled = true)
-	public void test_Get_API_VerifyEmail() throws ClientProtocolException, IOException, InterruptedException {	
-		System.out.println("");
-		System.out.println("");
-		System.out.println("-------------------------------------");
-		System.out.println("TEST#3: verify email");
-		System.out.println("-------------------------------------");
-		TestUtil.startTest("test_Get_API_VerifyEmail");
-		strMailFrom = prop.getProperty("mail_from");
-	// fetch email content 
-		ReadEmails reademail = new ReadEmails();
-		String strMailContent = reademail.readMails(randomString_firstName, strMailFrom, randomString_eMail);
-		//System.out.println(strMailContent);
-		if (strMailContent.contains("true")) {
-	//using JSOUP library to parse the verification link	
-			Document doc = Jsoup.parse(strMailContent);
-			Element link = doc.select("a").first();
-			//String mailText = doc.body().text();	// email body 
-			url_verifyEmail = link.attr("href"); // retrieves verification link with token
-			//String linkText = link.text(); 	// text attached with the hyper-link
-			TestUtil.writeResult ("INFO", "API", url_verifyEmail.toString());
-		//Create a hash map for passing header		
-			HashMap<String, String> headerMap = new HashMap<String, String>();
-			headerMap.put("Content-Type", "application/json");	// 'content header' as application/JSON
-			//headerMap.put("Authorization", authorization_Value);	// user-name and password with base64 encryption separated by colon
-			//headerMap.put("userName", "UserName_Value");		// pass value like user-name only if required
-			//headerMap.put("Password", "Password_Value");		// pass value like password only if required
-			
-		//GET the request
-			restClient = new RestClient();	
-			closeableHttpResponse = restClient.get(url_verifyEmail, headerMap);		// hit API to verify mail
-			
-			
-		//Validate Status Code
-			int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
-			
-
-		//Write result 	
-			if (strStatusCode == RESPONSE_STATUS_CODE_200){
-				TestUtil.writeResult("PASS", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
-			}
-			else {
-				TestUtil.writeResult("FAIL", "Response Code", String.valueOf(RESPONSE_STATUS_CODE_200) , Integer.toString(strStatusCode));
-			}
-			
-		//retrieve response string 			
-			String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
-			TestUtil.writeResult ("INFO", "Response String", responseString);
-			Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);	
-		} //if
-		
-		else {
-			TestUtil.writeResult ("FAIL", "Error", strMailContent );
-			Assert.fail("Mail not found in mailbox.");	
-			} //else
-		
-	//end test
-		TestUtil.endTest();	
-		
-}	// Method test_Get_API_VerifyEmail
-
-
 
 //PUT API call to update customer information // updates customer consent, agreement and contact information
 @Test(priority = 3, invocationCount = 1, enabled = true)
 	public void test_Put_API_UpdateCustomerInfo() throws ClientProtocolException, IOException, InterruptedException {	
+		CloseableHttpResponse closeableHttpResponse_UpdateCustInfo;
 		System.out.println("");
 		System.out.println("");
 		System.out.println("-------------------------------------");
@@ -359,10 +365,10 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		
 	//POST the request
 		restClient = new RestClient();	
-		closeableHttpResponse = restClient.put(url_Create, usersJSONString, headerMap);		// hit API
+		closeableHttpResponse_UpdateCustInfo = restClient.put(url_Create, usersJSONString, headerMap);		// hit API
 
 	//Validate Status Code
-		int strStatusCode = closeableHttpResponse.getStatusLine().getStatusCode();
+		int strStatusCode = closeableHttpResponse_UpdateCustInfo.getStatusLine().getStatusCode();
 
 	//Write result 	
 		if (strStatusCode == RESPONSE_STATUS_CODE_200){
@@ -373,7 +379,7 @@ public class PostAPI_CreateNewCustomer extends TestBase {
 		}	
 		
 	//retrieve response string 			
-		String responseString = EntityUtils.toString(closeableHttpResponse.getEntity(),"UTF-8" );	//return the response in string format
+		String responseString = EntityUtils.toString(closeableHttpResponse_UpdateCustInfo.getEntity(),"UTF-8" );	//return the response in string format
 		TestUtil.writeResult ("INFO", "Response String", responseString);
 		Assert.assertEquals(strStatusCode, RESPONSE_STATUS_CODE_200);	
 			
